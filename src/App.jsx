@@ -42,9 +42,6 @@ class App extends Component {
     const contact = this.state.contacts.find(
       (item) => item.id === id
     );
-
-    if (!contact) return;
-
     this.setState({
       contactForEdit: { ...contact },
     });
@@ -59,7 +56,7 @@ class App extends Component {
   };
 
   createContact(contact) {
-    const newContact = {
+     const newContact = {
       ...contact,
       id: Date.now(),
     };

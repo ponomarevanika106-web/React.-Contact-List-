@@ -1,128 +1,100 @@
-import React, { Component } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
-
+import { v4 as uuidv4 } from "uuid";
 import ContactList from "./components/ContactList/ContactList";
 import ContactForm from "./components/ContactForm/ContactForm";
 
-class App extends Component {
-  state = {
-    contacts: [],
-    contactForEdit: this.createEmptyContact(),
-  };
+const createEmptyContact = () => ({
+  id: null,
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+});
 
-  createEmptyContact() {
-    return {
-      id: null,
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-    };
-  }
+function App() {
+  const [contacts, setContacts] = useState(() => {
+    const data = localStorage.getItem("contacts");
+    return data ? JSON.parse(data) : [];
+  });
 
-  componentDidMount() {
-    const contacts = JSON.parse(localStorage.getItem("contacts"));
+  const [currentContact, setCurrentContact] = useState(
+    createEmptyContact()
+  );
 
-    this.setState({
-      contacts: contacts || [],
-    });
-  }
-
-  saveToStorage(contacts) {
+  useEffect(() => {
     localStorage.setItem("contacts", JSON.stringify(contacts));
-  }
+  }, [contacts]);
 
-  newContact = () => {
-    this.setState({
-      contactForEdit: this.createEmptyContact(),
-    });
-  };
+  const onContactDoubleClick = (id) => {
+    const contact = contacts.find((item) => item.id === id);
 
-  editContact = (id) => {
-    const contact = this.state.contacts.find(
-      (item) => item.id === id
-    );
-    this.setState({
-      contactForEdit: { ...contact },
-    });
-  };
-
-  saveContact = (contact) => {
-    if (contact.id) {
-      this.updateContact(contact);
-    } else {
-      this.createContact(contact);
+    if (contact) {
+      setCurrentContact(contact);
     }
   };
 
-  createContact(contact) {
-     const newContact = {
-      ...contact,
-      id: Date.now(),
-    };
-
-    const contacts = [...this.state.contacts, newContact];
-
-    this.saveToStorage(contacts);
-
-    this.setState({
-      contacts,
-      contactForEdit: this.createEmptyContact(),
-    });
-  }
-
-  updateContact(contact) {
-    this.setState((state) => {
-      const contacts = state.contacts.map((item) =>
-        item.id === contact.id ? contact : item
-      );
-
-      this.saveToStorage(contacts);
-
-      return {
-        contacts,
-        contactForEdit: { ...contact },
-      };
-    });
-  }
-
-  deleteContact = (id) => {
-    this.setState((state) => {
-      const contacts = state.contacts.filter(
-        (item) => item.id !== id
-      );
-
-      this.saveToStorage(contacts);
-
-      return {
-        contacts,
-        contactForEdit: this.createEmptyContact(),
-      };
-    });
+  const onAddNewContact = () => {
+    setCurrentContact(createEmptyContact());
   };
 
-  render() {
-    return (
-      <div className="container">
-        <h1 className="title">Contact List</h1>
+  const saveContact = (contact) => {
+    if (contact.id) {
+      updateContact(contact);
+    } else {
+      createContact(contact);
+    }
 
-        <div className="content">
-          <ContactList
-            contacts={this.state.contacts}
-            editContact={this.editContact}
-            deleteContact={this.deleteContact}
-          />
+    setCurrentContact(createEmptyContact());
+  };
 
-          <ContactForm
-            contact={this.state.contactForEdit}
-            saveContact={this.saveContact}
-            deleteContact={this.deleteContact}
-            newContact={this.newContact}
-          />
-        </div>
-      </div>
+  const createContact = (contact) => {
+    const newContact = {
+      ...contact,
+      id: uuidv4(),
+    };
+
+    setContacts((prevContacts) => [...prevContacts, newContact]);
+  };
+
+  const updateContact = (contact) => {
+    setContacts((prevContacts) =>
+      prevContacts.map((item) =>
+        item.id === contact.id ? contact : item
+      )
     );
-  }
+  };
+
+  const onDeleteContact = (id) => {
+    setContacts((prevContacts) =>
+      prevContacts.filter((item) => item.id !== id)
+    );
+
+    if (currentContact.id === id) {
+      setCurrentContact(createEmptyContact());
+    }
+  };
+
+  return (
+    <div className="container">
+      <h1 className="title">Contact List</h1>
+
+      <div className="content">
+        <ContactList
+          contacts={contacts}
+          editContact={onContactDoubleClick}
+          deleteContact={onDeleteContact}
+        />
+
+        <ContactForm
+          contact={currentContact}
+          saveContact={saveContact}
+          deleteContact={onDeleteContact}
+          newContact={onAddNewContact}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default App;

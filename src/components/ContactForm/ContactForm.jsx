@@ -1,138 +1,137 @@
-import React, { Component } from "react";
+import { useState, useEffect } from "react";
 import "./ContactForm.css";
 
-export default class ContactForm extends Component {
-  state = this.createEmptyContact();
+const createEmptyContact = () => ({
+  id: null,
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+});
 
-  createEmptyContact() {
-    return {
-      id: null,
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-    };
-  }
+function ContactForm({
+  contact,
+  saveContact,
+  deleteContact,
+  newContact,
+}) {
+  const [form, setForm] = useState(createEmptyContact());
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.contact.id !== state.id) {
-      return {
-        ...props.contact,
-      };
-    }
+  useEffect(() => {
+    setForm(contact || createEmptyContact());
+  }, [contact]);
 
-    return null;
-  }
-
-  onInputChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
   };
 
-  onClearField = (e) => {
-    const input = e.target.parentNode.querySelector("input");
-
-    this.setState({
-      [input.name]: "",
-    });
+  const clearField = (field) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      [field]: "",
+    }));
   };
 
-  onFormSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    this.props.saveContact({
-      ...this.state,
-    });
-
-    if (!this.state.id) {
-      this.setState(this.createEmptyContact());
-    }
+    saveContact(form);
   };
 
-  onContactDelete = () => {
-    this.props.deleteContact(this.state.id);
-
-    this.setState(this.createEmptyContact());
+  const handleNew = () => {
+    newContact();
+    setForm(createEmptyContact());
   };
 
-  onNewContact = () => {
-    this.props.newContact();
+  return (
+    <form className="contact-form" onSubmit={handleSubmit}>
+      <div className="input-group">
+        <input
+          type="text"
+          name="firstName"
+          placeholder="First Name"
+          value={form.firstName}
+          onChange={handleChange}
+        />
+        <button
+          type="button"
+          onClick={() => clearField("firstName")}
+        >
+          ✕
+        </button>
+      </div>
 
-    this.setState(this.createEmptyContact());
-  };
+      <div className="input-group">
+        <input
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          value={form.lastName}
+          onChange={handleChange}
+        />
+        <button
+          type="button"
+          onClick={() => clearField("lastName")}
+        >
+          ✕
+        </button>
+      </div>
 
-  render() {
-    const { firstName, lastName, email, phone, id } = this.state;
+      <div className="input-group">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        <button
+          type="button"
+          onClick={() => clearField("email")}
+        >
+          ✕
+        </button>
+      </div>
 
-    return (
-      <form className="contact-form" onSubmit={this.onFormSubmit}>
-        <div className="field">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={firstName}
-            onChange={this.onInputChange}
-          />
-          <button type="button" onClick={this.onClearField}>
-            ✕
+      <div className="input-group">
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone"
+          value={form.phone}
+          onChange={handleChange}
+        />
+        <button
+          type="button"
+          onClick={() => clearField("phone")}
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="buttons">
+        <button type="button" onClick={handleNew}>
+          New
+        </button>
+
+        <button type="submit">
+          Save
+        </button>
+
+        {form.id && (
+          <button
+            type="button"
+            onClick={() => deleteContact(form.id)}
+          >
+            Delete
           </button>
-        </div>
-
-        <div className="field">
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={lastName}
-            onChange={this.onInputChange}
-          />
-          <button type="button" onClick={this.onClearField}>
-            ✕
-          </button>
-        </div>
-
-        <div className="field">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={email}
-            onChange={this.onInputChange}
-          />
-          <button type="button" onClick={this.onClearField}>
-            ✕
-          </button>
-        </div>
-
-        <div className="field">
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone"
-            value={phone}
-            onChange={this.onInputChange}
-          />
-          <button type="button" onClick={this.onClearField}>
-            ✕
-          </button>
-        </div>
-
-        <div className="buttons">
-          <button type="button" onClick={this.onNewContact}>
-            New
-          </button>
-
-          <button type="submit">Save</button>
-
-          {id && (
-            <button type="button" onClick={this.onContactDelete}>
-              Delete
-            </button>
-          )}
-        </div>
-      </form>
-    );
-  }
+        )}
+      </div>
+    </form>
+  );
 }
+
+export default ContactForm;

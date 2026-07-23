@@ -1,38 +1,37 @@
-import React, { Component } from "react";
 import "./ContactItem.css";
 
-class ContactItem extends Component {
-  onEdit = () => {
-    this.props.editContact(this.props.contact.id);
+function ContactItem({
+  contact,
+  editContact,
+  deleteContact,
+}) {
+  const handleEdit = () => {
+    editContact(contact.id);
   };
 
-  onDelete = (e) => {
+  const handleDelete = (e) => {
     e.stopPropagation();
-    this.props.deleteContact(this.props.contact.id);
+    deleteContact(contact.id);
   };
 
-  render() {
-    const { firstName, lastName } = this.props.contact;
+  return (
+    <div
+      className="contact-item"
+      onDoubleClick={handleEdit}
+    >
+      <span className="contact-name">
+        {contact.firstName} {contact.lastName}
+      </span>
 
-    return (
-      <div
-        className="contact-item"
-        onDoubleClick={this.onEdit}
+      <button
+        className="delete-btn"
+        type="button"
+        onClick={handleDelete}
       >
-        <span className="contact-name">
-          {firstName} {lastName}
-        </span>
-
-        <button
-          className="delete-btn"
-          type="button"
-          onClick={this.onDelete}
-        >
-          ✕
-        </button>
-      </div>
-    );
-  }
+        ✕
+      </button>
+    </div>
+  );
 }
 
 export default ContactItem;

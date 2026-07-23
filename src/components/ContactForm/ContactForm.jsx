@@ -21,45 +21,48 @@ function ContactForm({
     setForm(contact || createEmptyContact());
   }, [contact]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const onInputChange = ({ target: { name, value } }) => {
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,
     }));
   };
 
-  const clearField = (field) => {
+  const onClearField = ({ target }) => {
+    const { name } = target.previousElementSibling;
+
     setForm((prevForm) => ({
       ...prevForm,
-      [field]: "",
+      [name]: "",
     }));
   };
 
-  const handleSubmit = (e) => {
+  const onSaveContact = (e) => {
     e.preventDefault();
+
     saveContact(form);
+
+    if (!form.id) {
+      setForm(createEmptyContact());
+    }
   };
 
-  const handleNew = () => {
+  const onNewContact = () => {
     newContact();
     setForm(createEmptyContact());
   };
 
   return (
-    <form className="contact-form" onSubmit={handleSubmit}>
+    <form className="contact-form" onSubmit={onSaveContact}>
       <div className="input-group">
         <input
           type="text"
           name="firstName"
           placeholder="First Name"
           value={form.firstName}
-          onChange={handleChange}
+          onChange={onInputChange}
         />
-        <button
-          type="button"
-          onClick={() => clearField("firstName")}
-        >
+        <button type="button" onClick={onClearField}>
           ✕
         </button>
       </div>
@@ -70,12 +73,9 @@ function ContactForm({
           name="lastName"
           placeholder="Last Name"
           value={form.lastName}
-          onChange={handleChange}
+          onChange={onInputChange}
         />
-        <button
-          type="button"
-          onClick={() => clearField("lastName")}
-        >
+        <button type="button" onClick={onClearField}>
           ✕
         </button>
       </div>
@@ -86,12 +86,9 @@ function ContactForm({
           name="email"
           placeholder="Email"
           value={form.email}
-          onChange={handleChange}
+          onChange={onInputChange}
         />
-        <button
-          type="button"
-          onClick={() => clearField("email")}
-        >
+        <button type="button" onClick={onClearField}>
           ✕
         </button>
       </div>
@@ -102,18 +99,15 @@ function ContactForm({
           name="phone"
           placeholder="Phone"
           value={form.phone}
-          onChange={handleChange}
+          onChange={onInputChange}
         />
-        <button
-          type="button"
-          onClick={() => clearField("phone")}
-        >
+        <button type="button" onClick={onClearField}>
           ✕
         </button>
       </div>
 
       <div className="buttons">
-        <button type="button" onClick={handleNew}>
+        <button type="button" onClick={onNewContact}>
           New
         </button>
 

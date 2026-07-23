@@ -49,12 +49,9 @@ function App() {
   };
 
   const createContact = (contact) => {
-    const newContact = {
-      ...contact,
-      id: uuidv4(),
-    };
-
-    setContacts((prevContacts) => [...prevContacts, newContact]);
+    contact.id = uuidv4();
+    
+    setContacts((prevContacts) => [...prevContacts, contact]);
   };
 
   const updateContact = (contact) => {

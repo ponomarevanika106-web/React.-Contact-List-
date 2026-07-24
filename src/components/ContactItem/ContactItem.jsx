@@ -5,10 +5,6 @@ function ContactItem({
   editContact,
   deleteContact,
 }) {
-  const handleEdit = () => {
-    editContact(contact.id);
-  };
-
   const handleDelete = (e) => {
     e.stopPropagation();
     deleteContact(contact.id);
@@ -17,7 +13,7 @@ function ContactItem({
   return (
     <div
       className="contact-item"
-      onDoubleClick={handleEdit}
+      onDoubleClick={editContact}
     >
       <span className="contact-name">
         {contact.firstName} {contact.lastName}

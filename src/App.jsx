@@ -13,45 +13,36 @@ const createEmptyContact = () => ({
 });
 
 function App() {
-  const [contacts, setContacts] = useState(() => {
-    const data = localStorage.getItem("contacts");
-    return data ? JSON.parse(data) : [];
-  });
-
-  const [currentContact, setCurrentContact] = useState(
-    createEmptyContact()
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(localStorage.getItem("contacts")) || []
   );
+
+  const [currentContact, setCurrentContact] = useState(createEmptyContact);
 
   useEffect(() => {
     localStorage.setItem("contacts", JSON.stringify(contacts));
   }, [contacts]);
 
   const onContactDoubleClick = (id) => {
-    const contact = contacts.find((item) => item.id === id);
-
-    if (contact) {
-      setCurrentContact(contact);
-    }
+    setCurrentContact(
+      contacts.find((item) => item.id === id)
+    );
   };
 
   const onAddNewContact = () => {
     setCurrentContact(createEmptyContact());
   };
 
-  const saveContact = (contact) => {
-    if (contact.id) {
-      updateContact(contact);
-    } else {
-      createContact(contact);
-    }
-
-    setCurrentContact(createEmptyContact());
-  };
-
   const createContact = (contact) => {
-    contact.id = uuidv4();
-    
-    setContacts((prevContacts) => [...prevContacts, contact]);
+    const newContact = {
+      ...contact,
+      id: uuidv4(),
+    };
+
+    setContacts((prevContacts) => [
+      ...prevContacts,
+      newContact,
+    ]);
   };
 
   const updateContact = (contact) => {
@@ -60,6 +51,17 @@ function App() {
         item.id === contact.id ? contact : item
       )
     );
+
+    setCurrentContact(contact);
+  };
+
+  const saveContact = (contact) => {
+    if (contact.id) {
+      updateContact(contact);
+    } else {
+      createContact(contact);
+      setCurrentContact(createEmptyContact());
+    }
   };
 
   const onDeleteContact = (id) => {
@@ -67,9 +69,7 @@ function App() {
       prevContacts.filter((item) => item.id !== id)
     );
 
-    if (currentContact.id === id) {
-      setCurrentContact(createEmptyContact());
-    }
+    setCurrentContact(createEmptyContact());
   };
 
   return (

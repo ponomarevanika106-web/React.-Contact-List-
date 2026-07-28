@@ -13,7 +13,7 @@ function ContactItem({
   return (
     <div
       className="contact-item"
-      onDoubleClick={editContact}
+      onDoubleClick={() => editContact(contact)}
     >
       <span className="contact-name">
         {contact.firstName} {contact.lastName}

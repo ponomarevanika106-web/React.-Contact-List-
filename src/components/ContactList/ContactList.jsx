@@ -17,7 +17,7 @@ function ContactList({
           <ContactItem
             key={contact.id}
             contact={contact}
-            editContact={() => editContact(contact)}
+            editContact={editContact}
             deleteContact={deleteContact}
           />
         ))

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import { v4 as uuidv4 } from "uuid";
 import ContactList from "./components/ContactList/ContactList";
 import ContactForm from "./components/ContactForm/ContactForm";
+import api from "./api/contacts-service";
 
 const createEmptyContact = () => ({
   id: null,
@@ -14,80 +14,118 @@ const createEmptyContact = () => ({
 
 function App() {
   const [contacts, setContacts] = useState([]);
-  const [currentContact, setCurrentContact] = useState(createEmptyContact());
-  
-  useEffect(() => {
-    const downloadedContacts = JSON.parse(
-      localStorage.getItem("contacts")
-    );
+  const [currentContact, setCurrentContact] = useState(
+    createEmptyContact()
+  );
 
-    setContacts(downloadedContacts || []);
+  // Загрузка контактов
+  useEffect(() => {
+    api
+      .get("/")
+      .then(({ data }) => {
+        setContacts(data || []);
+      })
+      .catch((error) => {
+        console.error(
+          "Ошибка загрузки контактов:",
+          error
+        );
+      });
   }, []);
 
-  const saveToStorage = (updatedContacts) => {
-    localStorage.setItem(
-      "contacts",
-      JSON.stringify(updatedContacts)
-    );
-  };
-
+  // Двойной клик по контакту
   const onContactDoubleClick = (contact) => {
-    setCurrentContact(contact);
+    setCurrentContact({ ...contact });
   };
 
+  // Новый контакт
   const onAddNewContact = () => {
     setCurrentContact(createEmptyContact());
   };
 
+  // Создание контакта
   const createContact = (contact) => {
-    const newContact = {
-      ...contact,
-      id: uuidv4(),
-    };
+    api
+      .post("/", {
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        email: contact.email,
+        phone: contact.phone,
+      })
+      .then(({ data }) => {
+        setContacts((prevContacts) => [
+          ...prevContacts,
+          data,
+        ]);
 
-    const updatedContacts = [
-      ...contacts,
-      newContact,
-    ];
-
-    setContacts(updatedContacts);
-    saveToStorage(updatedContacts);
+        setCurrentContact(createEmptyContact());
+      })
+      .catch((error) => {
+        console.error(
+          "Ошибка создания контакта:",
+          error
+        );
+      });
   };
 
+  // Обновление контакта
   const updateContact = (contact) => {
-    const updatedContacts = contacts.map((item) =>
-      item.id === contact.id ? contact : item
-    );
+    api
+      .put(`/${contact.id}`, contact)
+      .then(({ data }) => {
+        setContacts((prevContacts) =>
+          prevContacts.map((item) =>
+            item.id === data.id ? data : item
+          )
+        );
 
-    setContacts(updatedContacts);
-    saveToStorage(updatedContacts);
-
-    setCurrentContact(contact);
+        setCurrentContact(data);
+      })
+      .catch((error) => {
+        console.error(
+          "Ошибка обновления контакта:",
+          error
+        );
+      });
   };
 
+  // Сохранение контакта
   const saveContact = (contact) => {
     if (contact.id) {
       updateContact(contact);
     } else {
       createContact(contact);
-      setCurrentContact(createEmptyContact());
     }
   };
 
+  // Удаление контакта
   const onDeleteContact = (id) => {
-    const updatedContacts = contacts.filter(
-      (item) => item.id !== id
-    );
+    api
+      .delete(`/${id}`)
+      .then(() => {
+        setContacts((prevContacts) =>
+          prevContacts.filter(
+            (item) => item.id !== id
+          )
+        );
 
-    setContacts(updatedContacts);
-    saveToStorage(updatedContacts);
-
-    setCurrentContact(createEmptyContact());
+        if (currentContact.id === id) {
+          setCurrentContact(createEmptyContact());
+        }
+      })
+      .catch((error) => {
+        console.error(
+          "Ошибка удаления контакта:",
+          error
+        );
+      });
   };
 
   return (
     <div className="container">
-      <h1 className="title">Contact List</h1>
+      <h1 className="title">
+        Contact List
+      </h1>
 
       <div className="content">
         <ContactList

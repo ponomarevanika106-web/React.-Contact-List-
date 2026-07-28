@@ -41,7 +41,12 @@ export default [
       'no-unused-vars': 'warn',
       'no-undef': 'error',
       'eqeqeq': 'error',
-      'no-console': 'warn',
+      'no-console': [
+      'warn',
+      {
+       allow: ['error', 'warn'],
+      },
+      ],
       'prefer-const': 'error',
       'no-var': 'error',
       'object-shorthand': 'error',

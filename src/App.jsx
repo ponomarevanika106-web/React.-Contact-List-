@@ -18,7 +18,6 @@ function App() {
     createEmptyContact()
   );
 
-  // Загрузка контактов
   useEffect(() => {
     api
       .get("/")
@@ -33,17 +32,14 @@ function App() {
       });
   }, []);
 
-  // Двойной клик по контакту
   const onContactDoubleClick = (contact) => {
     setCurrentContact({ ...contact });
   };
 
-  // Новый контакт
   const onAddNewContact = () => {
     setCurrentContact(createEmptyContact());
   };
 
-  // Создание контакта
   const createContact = (contact) => {
     api
       .post("/", {
@@ -68,7 +64,7 @@ function App() {
       });
   };
 
-  // Обновление контакта
+  
   const updateContact = (contact) => {
     api
       .put(`/${contact.id}`, contact)
@@ -89,7 +85,6 @@ function App() {
       });
   };
 
-  // Сохранение контакта
   const saveContact = (contact) => {
     if (contact.id) {
       updateContact(contact);
@@ -98,7 +93,6 @@ function App() {
     }
   };
 
-  // Удаление контакта
   const onDeleteContact = (id) => {
     api
       .delete(`/${id}`)
@@ -145,4 +139,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 

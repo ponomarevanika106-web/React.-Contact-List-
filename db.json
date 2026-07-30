@@ -1,4 +1,47 @@
 {
-  "contacts": [],
+  "contacts": [
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "r3XnWls7ko8"
+    },
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "oYvC99TH9Q0"
+    },
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "cBWfdlJEnTw"
+    },
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "-Th8JdEcUTo"
+    },
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "ttmONmZCb_8"
+    },
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "4422222",
+      "id": "mlzv_Zv6_5c"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

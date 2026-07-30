@@ -1,13 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./ContactForm.css";
 
-const createEmptyContact = () => ({
-  id: null,
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-});
+import { createEmptyContact } from "../../constants/constants";
 
 function ContactForm({
   contact,
@@ -18,8 +12,10 @@ function ContactForm({
   const [form, setForm] = useState(createEmptyContact());
 
   useEffect(() => {
-    setForm(contact || createEmptyContact());
-  }, [contact]);
+  // eslint-disable-next-line no-console
+  console.log("contact from redux:", contact);
+  setForm(contact);
+}, [contact]);
 
   const onInputChange = ({ target: { name, value } }) => {
     setForm((prevForm) => ({
@@ -39,21 +35,18 @@ function ContactForm({
 
   const onSaveContact = (e) => {
     e.preventDefault();
-
     saveContact(form);
-
-    if (!form.id) {
-      setForm(createEmptyContact());
-    }
   };
 
   const onNewContact = () => {
     newContact();
-    setForm(createEmptyContact());
   };
 
   return (
-    <form className="contact-form" onSubmit={onSaveContact}>
+    <form
+      className="contact-form"
+      onSubmit={onSaveContact}
+    >
       <div className="input-group">
         <input
           type="text"
@@ -62,7 +55,10 @@ function ContactForm({
           value={form.firstName}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -75,7 +71,10 @@ function ContactForm({
           value={form.lastName}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -88,7 +87,10 @@ function ContactForm({
           value={form.email}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -101,13 +103,19 @@ function ContactForm({
           value={form.phone}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
 
       <div className="buttons">
-        <button type="button" onClick={onNewContact}>
+        <button
+          type="button"
+          onClick={onNewContact}
+        >
           New
         </button>
 

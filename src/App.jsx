@@ -1,43 +1,44 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import "./App.css";
 import ContactList from "./components/ContactList/ContactList";
 import ContactForm from "./components/ContactForm/ContactForm";
 import api from "./api/contacts-service";
 
-const createEmptyContact = () => ({
-  id: null,
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-});
+import {
+  setContacts,
+  addContact,
+  updateContact,
+  deleteContact,
+  setCurrentContact,
+} from "./store/actions/contactActions";
+
+import { createEmptyContact } from "./constants/constants";
 
 function App() {
-  const [contacts, setContacts] = useState([]);
-  const [currentContact, setCurrentContact] = useState(
-    createEmptyContact()
+  const dispatch = useDispatch();
+
+  const contacts = useSelector((state) => state.contacts);
+  const currentContact = useSelector(
+    (state) => state.currentContact
   );
 
   useEffect(() => {
     api
       .get("/")
       .then(({ data }) => {
-        setContacts(data || []);
+        dispatch(setContacts(data));
       })
-      .catch((error) => {
-        console.error(
-          "Ошибка загрузки контактов:",
-          error
-        );
-      });
-  }, []);
+      .catch(console.error);
+  }, [dispatch]);
 
   const onContactDoubleClick = (contact) => {
-    setCurrentContact({ ...contact });
+    dispatch(setCurrentContact({ ...contact }));
   };
 
   const onAddNewContact = () => {
-    setCurrentContact(createEmptyContact());
+    dispatch(setCurrentContact(createEmptyContact()));
   };
 
   const createContact = (contact) => {
@@ -49,45 +50,25 @@ function App() {
         phone: contact.phone,
       })
       .then(({ data }) => {
-        setContacts((prevContacts) => [
-          ...prevContacts,
-          data,
-        ]);
-
-        setCurrentContact(createEmptyContact());
+        dispatch(addContact(data));
+        dispatch(setCurrentContact(createEmptyContact()));
       })
-      .catch((error) => {
-        console.error(
-          "Ошибка создания контакта:",
-          error
-        );
-      });
+      .catch(console.error);
   };
 
-  
-  const updateContact = (contact) => {
+  const changeContact = (contact) => {
     api
       .put(`/${contact.id}`, contact)
       .then(({ data }) => {
-        setContacts((prevContacts) =>
-          prevContacts.map((item) =>
-            item.id === data.id ? data : item
-          )
-        );
-
-        setCurrentContact(data);
+        dispatch(updateContact(data));
+        dispatch(setCurrentContact({ ...data }));
       })
-      .catch((error) => {
-        console.error(
-          "Ошибка обновления контакта:",
-          error
-        );
-      });
+      .catch(console.error);
   };
 
-  const saveContact = (contact) => {
+  const onSaveContact = (contact) => {
     if (contact.id) {
-      updateContact(contact);
+      changeContact(contact);
     } else {
       createContact(contact);
     }
@@ -97,29 +78,15 @@ function App() {
     api
       .delete(`/${id}`)
       .then(() => {
-        setContacts((prevContacts) =>
-          prevContacts.filter(
-            (item) => item.id !== id
-          )
-        );
-
-        if (currentContact.id === id) {
-          setCurrentContact(createEmptyContact());
-        }
+        dispatch(deleteContact(id));
+        dispatch(setCurrentContact(createEmptyContact()));
       })
-      .catch((error) => {
-        console.error(
-          "Ошибка удаления контакта:",
-          error
-        );
-      });
+      .catch(console.error);
   };
 
   return (
     <div className="container">
-      <h1 className="title">
-        Contact List
-      </h1>
+      <h1 className="title">Contact List</h1>
 
       <div className="content">
         <ContactList
@@ -130,7 +97,7 @@ function App() {
 
         <ContactForm
           contact={currentContact}
-          saveContact={saveContact}
+          saveContact={onSaveContact}
           deleteContact={onDeleteContact}
           newContact={onAddNewContact}
         />
@@ -139,4 +106,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

@@ -5,7 +5,7 @@ function ContactItem({
   editContact,
   deleteContact,
 }) {
-  const handleDelete = (e) => {
+  const onDeleteClick = (e) => {
     e.stopPropagation();
     deleteContact(contact.id);
   };
@@ -13,16 +13,18 @@ function ContactItem({
   return (
     <div
       className="contact-item"
-      onDoubleClick={() => editContact(contact)}
+     onDoubleClick={() => {
+     editContact(contact);
+}}
     >
       <span className="contact-name">
         {contact.firstName} {contact.lastName}
       </span>
 
       <button
-        className="delete-btn"
         type="button"
-        onClick={handleDelete}
+        className="delete-btn"
+        onClick={onDeleteClick}
       >
         ✕
       </button>

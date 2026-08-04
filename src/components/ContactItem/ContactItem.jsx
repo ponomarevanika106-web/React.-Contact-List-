@@ -1,23 +1,40 @@
+import { useDispatch } from "react-redux";
 import "./ContactItem.css";
 
-function ContactItem({
-  contact,
-  editContact,
+import api from "../../api/contacts-service";
+
+import {
   deleteContact,
-}) {
+  setCurrentContact,
+} from "../../store/actions/contactActions";
+
+import { createEmptyContact } from "../../constants/constants";
+
+function ContactItem({ contact }) {
+  const dispatch = useDispatch();
+
+  const onEditContact = () => {
+    dispatch(setCurrentContact(contact));
+  };
+
   const onDeleteClick = (e) => {
     e.stopPropagation();
-    deleteContact(contact.id);
+
+    api
+      .delete(`/${contact.id}`)
+      .then(() => {
+        dispatch(deleteContact(contact.id));
+        dispatch(setCurrentContact(createEmptyContact()));
+      })
+      .catch(console.error);
   };
 
   return (
     <div
       className="contact-item"
-     onDoubleClick={() => {
-     editContact(contact);
-}}
+      onDoubleClick={onEditContact}
     >
-      <span className="contact-name">
+      <span>
         {contact.firstName} {contact.lastName}
       </span>
 

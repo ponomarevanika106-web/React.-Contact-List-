@@ -34,13 +34,6 @@
       "email": "ponomarevanika106@gmail.com",
       "phone": "4422222",
       "id": "ttmONmZCb_8"
-    },
-    {
-      "firstName": "Ніколь",
-      "lastName": "Пономарьова",
-      "email": "ponomarevanika106@gmail.com",
-      "phone": "4422222",
-      "id": "mlzv_Zv6_5c"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -22,7 +22,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Contact List</h1>
+      <h1 className="title">Contact List</h1>
 
       <div className="content">
         <ContactList />

@@ -1,8 +1,6 @@
 import { useDispatch } from "react-redux";
 import "./ContactItem.css";
 
-import api from "../../api/contacts-service";
-
 import {
   deleteContact,
   setCurrentContact,
@@ -20,13 +18,8 @@ function ContactItem({ contact }) {
   const onDeleteClick = (e) => {
     e.stopPropagation();
 
-    api
-      .delete(`/${contact.id}`)
-      .then(() => {
-        dispatch(deleteContact(contact.id));
-        dispatch(setCurrentContact(createEmptyContact()));
-      })
-      .catch(console.error);
+    dispatch(deleteContact(contact.id));
+    dispatch(setCurrentContact(createEmptyContact()));
   };
 
   return (

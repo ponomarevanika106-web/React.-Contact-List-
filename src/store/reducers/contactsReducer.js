@@ -7,22 +7,20 @@ function contactsReducer(
   { type, payload }
 ) {
   switch (type) {
-    case ACTION_TYPES.GET_CONTACTS:
+    case ACTION_TYPES.SET_CONTACTS:
       return payload;
 
     case ACTION_TYPES.ADD_CONTACT:
       return [...state, payload];
 
-    case ACTION_TYPES.CHANGE_CONTACT:
+    case ACTION_TYPES.UPDATE_CONTACT:
       return state.map((contact) =>
-        contact.id === payload.id
-          ? payload
-          : contact
+        contact.id === payload.id ? payload : contact
       );
 
     case ACTION_TYPES.DELETE_CONTACT:
       return state.filter(
-        ({ id }) => id !== payload
+        (contact) => contact.id !== payload
       );
 
     default:

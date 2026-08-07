@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import "./ContactForm.css";
+
 import api from "../../api/contacts-service";
 
 import {
@@ -16,7 +17,9 @@ import { createEmptyContact } from "../../constants/constants";
 function ContactForm() {
   const dispatch = useDispatch();
 
-  const contact = useSelector((state) => state.currentContact);
+  const contact = useSelector(
+    (state) => state.currentContact
+  );
 
   const [form, setForm] = useState(createEmptyContact());
 
@@ -24,19 +27,19 @@ function ContactForm() {
     setForm(contact);
   }, [contact]);
 
-  const onInputChange = ({ target: { name, value } }) => {
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: value,
+  const onInputChange = ({ target }) => {
+    setForm((prev) => ({
+      ...prev,
+      [target.name]: target.value,
     }));
   };
 
   const onClearField = ({ target }) => {
-    const { name } = target.previousElementSibling;
+    const input = target.previousElementSibling;
 
-    setForm((prevForm) => ({
-      ...prevForm,
-      [name]: "",
+    setForm((prev) => ({
+      ...prev,
+      [input.name]: "",
     }));
   };
 
@@ -67,7 +70,7 @@ function ContactForm() {
     }
   };
 
-  const onDelete = () => {
+  const onDeleteContact = () => {
     api
       .delete(`/${form.id}`)
       .then(() => {
@@ -82,7 +85,10 @@ function ContactForm() {
   };
 
   return (
-    <form onSubmit={onSaveContact}>
+    <form
+      className="contact-form"
+      onSubmit={onSaveContact}
+    >
       <div className="input-group">
         <input
           type="text"
@@ -91,7 +97,10 @@ function ContactForm() {
           value={form.firstName}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -104,7 +113,10 @@ function ContactForm() {
           value={form.lastName}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -117,7 +129,10 @@ function ContactForm() {
           value={form.email}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
@@ -130,13 +145,19 @@ function ContactForm() {
           value={form.phone}
           onChange={onInputChange}
         />
-        <button type="button" onClick={onClearField}>
+        <button
+          type="button"
+          onClick={onClearField}
+        >
           ✕
         </button>
       </div>
 
       <div className="buttons">
-        <button type="button" onClick={onNewContact}>
+        <button
+          type="button"
+          onClick={onNewContact}
+        >
           New
         </button>
 
@@ -145,7 +166,10 @@ function ContactForm() {
         </button>
 
         {form.id && (
-          <button type="button" onClick={onDelete}>
+          <button
+            type="button"
+            onClick={onDeleteContact}
+          >
             Delete
           </button>
         )}
@@ -153,5 +177,4 @@ function ContactForm() {
     </form>
   );
 }
-
 export default ContactForm;

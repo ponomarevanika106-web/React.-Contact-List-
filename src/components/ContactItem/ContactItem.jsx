@@ -1,6 +1,8 @@
 import { useDispatch } from "react-redux";
 import "./ContactItem.css";
 
+import api from "../../api/contacts-service";
+
 import {
   deleteContact,
   setCurrentContact,
@@ -15,11 +17,16 @@ function ContactItem({ contact }) {
     dispatch(setCurrentContact(contact));
   };
 
-  const onDeleteClick = (e) => {
+  const onDeleteContact = (e) => {
     e.stopPropagation();
 
-    dispatch(deleteContact(contact.id));
-    dispatch(setCurrentContact(createEmptyContact()));
+    api
+      .delete(`/${contact.id}`)
+      .then(() => {
+        dispatch(deleteContact(contact.id));
+        dispatch(setCurrentContact(createEmptyContact()));
+      })
+      .catch(console.error);
   };
 
   return (
@@ -34,7 +41,7 @@ function ContactItem({ contact }) {
       <button
         type="button"
         className="delete-btn"
-        onClick={onDeleteClick}
+        onClick={onDeleteContact}
       >
         ✕
       </button>

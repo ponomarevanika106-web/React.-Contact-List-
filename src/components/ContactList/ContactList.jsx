@@ -1,9 +1,12 @@
 import { useSelector } from "react-redux";
 import "./ContactList.css";
+
 import ContactItem from "../ContactItem/ContactItem";
 
 function ContactList() {
-  const contacts = useSelector((state) => state.contacts);
+  const contacts = useSelector(
+    (state) => state.contacts
+  );
 
   return (
     <div className="contact-list">

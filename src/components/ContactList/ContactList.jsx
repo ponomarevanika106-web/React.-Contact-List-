@@ -1,31 +1,24 @@
-import React, { Component } from "react";
+import { useSelector } from "react-redux";
+import ContactItem from "../ContactItem/ContactItem";
 import "./ContactList.css";
 
-import ContactItem from "../ContactItem/ContactItem";
+export default function ContactList() {
+  const contacts = useSelector((state) => state.contacts.contacts);
 
-class ContactList extends Component {
-  render() {
-    const { contacts, editContact, deleteContact } = this.props;
+  return (
+    <div className="contact-list">
+      <h2 className="list-title">Contacts</h2>
 
-    return (
-      <div className="contact-list">
-        <h2 className="list-title">Contacts</h2>
-
-        {contacts.length === 0 ? (
-          <p className="empty">No contacts</p>
-        ) : (
-          contacts.map((contact) => (
-            <ContactItem
-              key={contact.id}
-              contact={contact}
-              editContact={editContact}
-              deleteContact={deleteContact}
-            />
-          ))
-        )}
-      </div>
-    );
-  }
+      {contacts.length > 0 ? (
+        contacts.map((contact) => (
+          <ContactItem
+            key={contact.id}
+            contact={contact}
+          />
+        ))
+      ) : (
+        <div className="empty">No contacts</div>
+      )}
+    </div>
+  );
 }
-
-export default ContactList;

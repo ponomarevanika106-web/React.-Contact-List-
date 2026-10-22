@@ -1,3 +1,4 @@
+
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getContacts,
@@ -5,42 +6,26 @@ import {
   updateContact,
   deleteContact,
 } from "../api/contacts-service";
-
-const emptyContact = {
-  id: null,
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-};
+import { createEmptyContact } from "../constants/constants";
 
 export const fetchContacts = createAsyncThunk(
   "contacts/fetchContacts",
-  async () => {
-    return await getContacts();
-  }
+  getContacts
 );
 
 export const addContact = createAsyncThunk(
   "contacts/addContact",
-  async (contact) => {
-    return await createContact(contact);
-  }
+  createContact
 );
 
 export const editContact = createAsyncThunk(
   "contacts/editContact",
-  async (contact) => {
-    return await updateContact(contact);
-  }
+  updateContact
 );
 
 export const removeContact = createAsyncThunk(
   "contacts/removeContact",
-  async (id) => {
-    await deleteContact(id);
-    return id;
-  }
+  deleteContact
 );
 
 const contactsSlice = createSlice({
@@ -48,7 +33,7 @@ const contactsSlice = createSlice({
 
   initialState: {
     contacts: [],
-    currentContact: emptyContact,
+    currentContact: createEmptyContact(),
     loading: false,
     error: null,
   },
@@ -59,21 +44,31 @@ const contactsSlice = createSlice({
     },
 
     newContact(state) {
-      state.currentContact = emptyContact;
+      state.currentContact = createEmptyContact();
     },
   },
 
   extraReducers: (builder) => {
     builder
+      .addCase(fetchContacts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.loading = false;
         state.contacts = action.payload;
       })
-
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(addContact.fulfilled, (state, action) => {
         state.contacts.push(action.payload);
-        state.currentContact = emptyContact;
+        state.currentContact = createEmptyContact();
       })
-
+      .addCase(addContact.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(editContact.fulfilled, (state, action) => {
         const index = state.contacts.findIndex(
           (contact) => contact.id === action.payload.id
@@ -85,20 +80,25 @@ const contactsSlice = createSlice({
 
         state.currentContact = action.payload;
       })
-
+      .addCase(editContact.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(removeContact.fulfilled, (state, action) => {
         state.contacts = state.contacts.filter(
           (contact) => contact.id !== action.payload
         );
 
-        state.currentContact = emptyContact;
+        if (state.currentContact.id === action.payload) {
+          state.currentContact = createEmptyContact();
+        }
+      })
+      .addCase(removeContact.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
 
-export const {
-  setCurrentContact,
-  newContact,
-} = contactsSlice.actions;
+export const { setCurrentContact, newContact } = contactsSlice.actions;
 
 export default contactsSlice.reducer;
+

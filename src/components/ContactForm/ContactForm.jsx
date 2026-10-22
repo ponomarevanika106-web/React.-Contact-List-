@@ -1,3 +1,4 @@
+
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -11,7 +12,6 @@ import "./ContactForm.css";
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-
   const contact = useSelector((state) => state.contacts.currentContact);
 
   const onInputChange = (e) => {
@@ -32,28 +32,38 @@ export default function ContactForm() {
     );
   };
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = async (e) => {
     e.preventDefault();
 
-    if (!contact.firstName && !contact.lastName) {
+    if (!contact.firstName.trim() || !contact.lastName.trim()) {
       return;
     }
 
-    if (contact.id) {
-      dispatch(editContact(contact));
-    } else {
-      dispatch(
-        addContact({
-          ...contact,
-          id: uuidv4(),
-        })
-      );
+    try {
+      if (contact.id) {
+        await dispatch(editContact(contact)).unwrap();
+      } else {
+        const { id, ...newContactData } = contact;
+
+        await dispatch(
+          addContact({
+            ...newContactData,
+            id: uuidv4(),
+          })
+        ).unwrap();
+      }
+    } catch (error) {
+      console.error("Failed to save contact:", error);
     }
   };
 
-  const onContactDelete = () => {
-    if (contact.id) {
-      dispatch(removeContact(contact.id));
+  const onContactDelete = async () => {
+    if (!contact.id) return;
+
+    try {
+      await dispatch(removeContact(contact.id)).unwrap();
+    } catch (error) {
+      console.error("Failed to delete contact:", error);
     }
   };
 
@@ -70,14 +80,11 @@ export default function ContactForm() {
             type={field.type}
             name={field.name}
             placeholder={field.placeholder}
-            value={contact[field.name]}
+            value={contact[field.name] ?? ""}
             onChange={onInputChange}
           />
 
-          <button
-            type="button"
-            onClick={() => onClearField(field.name)}
-          >
+          <button type="button" onClick={() => onClearField(field.name)}>
             ✕
           </button>
         </div>
@@ -88,9 +95,7 @@ export default function ContactForm() {
           New
         </button>
 
-        <button type="submit">
-          Save
-        </button>
+        <button type="submit">Save</button>
 
         {contact.id && (
           <button type="button" onClick={onContactDelete}>

@@ -1,3 +1,12 @@
 {
-  "contacts": []
-}  
+  "contacts": [
+    {
+      "firstName": "Ніколь",
+      "lastName": "Пономарьова",
+      "email": "ponomarevanika106@gmail.com",
+      "phone": "0666655555",
+      "id": "cXbi9GQct44"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
